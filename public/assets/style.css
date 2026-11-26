@@ -12,3 +12,83 @@
 
 /* Flat matching backgrounds keep the logo seamless on mobile. */
 header,footer{background:#00373b}.brand img,.footlogo{filter:none;mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none;object-fit:contain}
+
+/* ---- Interaction and motion layer (2026-11-26) ---- */
+/* Keyboard users: a visible focus ring everywhere, and a skip link. */
+:focus-visible{outline:2px solid #e5b865;outline-offset:3px;border-radius:2px}
+.skip-link{position:absolute;left:12px;top:-60px;z-index:100;background:#e5b865;color:#103b39;padding:12px 16px;font-weight:700;font-size:13px;transition:top .2s}
+.skip-link:focus{top:12px}
+
+/* Sticky header that tightens and gains depth once the page scrolls. */
+header{position:sticky;top:0;z-index:50;transition:height .3s ease,box-shadow .3s ease,background-color .3s ease}
+/* Background stays solid #00373b: the logo artwork is matched to that exact colour. */
+header.scrolled{height:72px;box-shadow:0 10px 30px rgba(0,20,20,.22)}
+header .brand img{transition:transform .3s ease}
+header.scrolled .brand img{transform:scale(.86);transform-origin:left center}
+nav a:not(.nav-button){position:relative}
+nav a:not(.nav-button)::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#4ed1c8;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+nav a:not(.nav-button):hover::after,nav a[aria-current="page"]::after{transform:scaleX(1)}
+nav a[aria-current="page"]{color:#4ed1c8}
+.nav-button{transition:background-color .25s,border-color .25s,color .25s}
+.nav-button:hover{background:#e5b865;border-color:#e5b865;color:#103b39}
+
+/* Buttons and inline links respond to the pointer. */
+.btn{transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease,color .2s ease}
+.btn span,.inline,.card-link span{transition:transform .2s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover span{transform:translate(3px,-3px)}
+.btn-gold:hover{background:#efc677;box-shadow:0 10px 24px rgba(229,184,101,.35)}
+.btn-line:hover{background:rgba(255,255,255,.08);border-color:white}
+.btn-teal:hover{background:#075453;box-shadow:0 10px 24px rgba(6,62,64,.25)}
+.inline{transition:border-color .2s,color .2s}
+.inline:hover{color:#063e40;border-color:#063e40}
+
+/* Experience cards: photo eases in, arrow lifts. */
+.exp-card{overflow:hidden}
+.exp-card .card-arrow{transition:background-color .25s,color .25s,transform .25s}
+.exp-card:hover .card-arrow{background:#e5b865;border-color:#e5b865;color:#103b39;transform:rotate(45deg)}
+.exp-card:hover .card-link span{transform:translate(3px,-3px)}
+.filters button{transition:background-color .2s,color .2s,border-color .2s}
+.filters button:hover{border-color:#075453;color:#075453}
+.filters button.active:hover{color:white}
+.quick a{transition:transform .2s,box-shadow .2s}
+.quick a:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,30,30,.18)}
+.service-grid article,.info-card{transition:transform .25s,box-shadow .25s}
+.service-grid article:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(7,61,58,.1)}
+
+/* Hero: slow drift on the photo, staggered entrance for the copy. */
+@keyframes jc-drift{from{transform:scale(1.08)}to{transform:scale(1)}}
+@keyframes jc-rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes jc-pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,209,190,.6)}70%{box-shadow:0 0 0 8px rgba(37,209,190,0)}}
+.hero-photo{animation:jc-drift 9s ease-out both}
+.hero-copy>*,.page-hero .shell>*,.detail-grid>div>*{animation:jc-rise .8s cubic-bezier(.2,.7,.2,1) both}
+.hero-copy>:nth-child(2),.page-hero .shell>:nth-child(2),.detail-grid>div>:nth-child(2){animation-delay:.12s}
+.hero-copy>:nth-child(3),.page-hero .shell>:nth-child(3),.detail-grid>div>:nth-child(3){animation-delay:.24s}
+.hero-copy>:nth-child(4),.page-hero .shell>:nth-child(4),.detail-grid>div>:nth-child(4){animation-delay:.36s}
+.pill i{animation:jc-pulse 2.4s ease-out infinite}
+.feature-shape .shape-circle{transition:transform 1.2s ease}
+.property-feature:hover .shape-circle{transform:scale(1.06) rotate(-4deg)}
+
+/* Scroll reveal. Only hides content once JS has confirmed it can show it again. */
+.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.in{opacity:1;transform:none}
+
+/* Back-to-top button. */
+.to-top{position:fixed;right:20px;bottom:20px;z-index:40;width:46px;height:46px;border-radius:50%;border:0;background:#e5b865;color:#103b39;font-size:18px;cursor:pointer;box-shadow:0 10px 24px rgba(0,30,30,.25);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .3s,transform .3s}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+
+/* Mobile menu: animated open state and a clear close control. */
+@media(max-width:760px){
+  header.scrolled{height:64px}
+  nav{top:100%}
+  nav.open{animation:jc-rise .25s ease both;box-shadow:0 20px 30px rgba(0,20,20,.3)}
+  nav a:not(.nav-button)::after{display:none}
+  #menu{width:44px;height:44px;cursor:pointer}
+}
+
+/* Respect people who ask for less motion. */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .js .reveal{opacity:1;transform:none}
+}
