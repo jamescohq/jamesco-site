@@ -1,3 +1,0 @@
-# Vercel serves only the static public/ pages for previews.
-# The admin editor script talks to Cloudflare-only endpoints and has no use on Vercel.
-public/assets/manage.js

@@ -12,25 +12,41 @@ An untouched copy of the export is kept beside this folder in `original_site_v9/
   guest guide, owners and contact. Shared files: `public/assets/style.css`, `app.js` and `content.js`.
 - **Backend** (Cloudflare only): `app/api/content` (content database, D1), `app/api/upload` and
   `app/api/media` (image storage, R2), and `app/manage` (admin editor behind ChatGPT sign-in).
-- `content.js` asks `/api/content` for edited text. If that endpoint is missing, as it is on Vercel,
+- `content.js` asks `/api/content` for edited text. If that endpoint is missing, as it is on Namecheap,
   the pages keep the text written into the HTML. The one console 404 for `/api/content` is expected.
 
-## Preview modes
+## Hosting and updates
 
 | Where | What works | What doesn't |
 |---|---|---|
-| Vercel (`vercel.json`) | Every public page, images, motion, security headers | Admin editor, saving content, uploads |
-| ChatGPT Sites (live) | Everything, including `/manage` | — |
-| Cloudflare (later) | Everything, once auth is replaced (see S1) | — |
+| Namecheap shared hosting | Every public page, images, motion, security headers (`public/.htaccess`) | Admin editor, saving content, uploads (backend not deployed) |
+| ChatGPT Sites (live, old) | Everything, including `/manage` | — |
+| Cloudflare (later, optional) | Everything, once auth is replaced (see S1) | — |
+
+**How updates go live:** every push to `main` on GitHub (`jamescohq/jamesco-site`) runs
+`.github/workflows/deploy-namecheap.yml`, which uploads `public/` to Namecheap over FTPS. Only changed
+files are sent. You can also run it by hand: GitHub → Actions → *Deploy to Namecheap* → *Run workflow*.
+
+One-time setup, in GitHub → Settings → Secrets and variables → Actions:
+
+| Name | Type | Value |
+|---|---|---|
+| `FTP_SERVER` | Secret | FTP server from cPanel → FTP Accounts (e.g. `ftp.yourdomain.com`) |
+| `FTP_USERNAME` | Secret | A cPanel FTP account limited to the site folder |
+| `FTP_PASSWORD` | Secret | That FTP account's password |
+| `FTP_SERVER_DIR` | Variable (optional) | Upload folder, default `public_html/`. Must end with `/`. |
+
+Until those secrets exist, the workflow skips the upload with a warning instead of failing.
 
 Local static preview without Node: `python -m http.server 4173 --directory public`
+(Python's server ignores `.htaccess`, so it doesn't show the security headers.)
 
 ## Security review (2026-11-26)
 
 | ID | Severity | Finding | Status |
 |---|---|---|---|
-| S1 | **High, once the site moves off ChatGPT Sites** | Admin checks (`/manage`, `POST /api/content`, `POST /api/upload`, `worker/index.ts`) trust the `oai-authenticated-user-email` request header. ChatGPT's hosting sets that header itself. On Vercel or plain Cloudflare, anyone can send it and become admin. | Not exposed on Vercel: those routes aren't deployed there. **Replace with real auth (for example Cloudflare Access, Clerk or Auth.js) before deploying the backend anywhere else.** |
-| S2 | Medium | No security headers on pages (no CSP, clickjacking or HSTS protection). | Fixed for Vercel in `vercel.json`. Tested locally: no CSP violations. |
+| S1 | **High, once the site moves off ChatGPT Sites** | Admin checks (`/manage`, `POST /api/content`, `POST /api/upload`, `worker/index.ts`) trust the `oai-authenticated-user-email` request header. ChatGPT's hosting sets that header itself. On any other host, anyone can send it and become admin. | Not exposed on Namecheap: those routes aren't deployed there. **Replace with real auth (for example Cloudflare Access, Clerk or Auth.js) before deploying the backend anywhere else.** |
+| S2 | Medium | No security headers on pages (no CSP, clickjacking or HSTS protection). | Fixed in `public/.htaccess` (same policy tested locally earlier: no CSP violations). Check the live headers after the first deploy. |
 | S3 | Low | Uploads trust the browser's file type instead of checking the file's bytes. Mitigated: files are served back only as JPEG/PNG/WebP with `nosniff`. | Open. Add a magic-byte check when porting. |
 | S4 | Low | No rate limit or storage cap on uploads (admin-only). | Open. |
 | S5 | Low | One corrupt row in the content table makes `GET /api/content` fail for every page (503). | Open. Skip bad rows instead. |
@@ -60,4 +76,5 @@ Added to the end of `style.css` and `app.js`. The original design is unchanged.
 2. Property photos, Airbnb links, Wi-Fi and guest instructions are still empty in `lib/default-content.json`.
 3. Experience prices are "To be confirmed" everywhere. Historical fees are not an approved rate card.
 4. Owner intake and photo upload are marked "pending" on `owners.html`.
-5. Domain: `jamescolife.com` is planned but not bought or connected.
+5. Domain: `jamescolife.com` is planned. Confirm it's registered and set as the hosting's domain.
+6. Namecheap account has two-factor authentication **off**. Turn it on: the account controls the domain and hosting.

@@ -1,0 +1,41 @@
+# James & Co — Namecheap (Apache/LiteSpeed) settings for the static site.
+# Deployed with the pages by .github/workflows/deploy-namecheap.yml.
+
+Options -Indexes
+DirectoryIndex index.html
+AddType image/webp .webp
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Always use HTTPS (Namecheap's free SSL must be active on the domain).
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # The admin editor only exists on the ChatGPT/Cloudflare backend.
+  RewriteRule ^manage(\.html)?/?$ / [L,R=302]
+  RewriteRule ^assets/manage\.js$ - [F,L]
+
+  # Hide dotfiles and the deploy tool's sync record, but keep SSL validation working.
+  RewriteRule ^\.well-known/ - [L]
+  RewriteRule (^|/)\. - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  # Browsers ignore this over plain HTTP, and HTTP is redirected above anyway.
+  Header always set Strict-Transport-Security "max-age=31536000"
+
+  # Pages always fresh; images cached for a week.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(webp|png|svg)$">
+    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+  </FilesMatch>
+</IfModule>
