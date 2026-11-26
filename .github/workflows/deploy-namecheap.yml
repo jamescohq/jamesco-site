@@ -1,6 +1,7 @@
 # Publishes public/ to Namecheap shared hosting on every push to main.
 # Needs repository secrets (GitHub > Settings > Secrets and variables > Actions):
-#   FTP_SERVER     e.g. ftp.jamescolife.com or the server name from cPanel
+#   FTP_SERVER     the hosting server's hostname from cPanel, e.g. server123.web-hosting.com
+#                  (FTPS checks the certificate, which matches that name, not ftp.<domain>)
 #   FTP_USERNAME   a cPanel FTP account whose Directory is the James & Co site folder ONLY
 #   FTP_PASSWORD   that account's password
 # The hosting plan's main domain (btdparts.com) lives in public_html. The FTP account must be

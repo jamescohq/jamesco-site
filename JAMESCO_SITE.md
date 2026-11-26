@@ -31,7 +31,7 @@ One-time setup, in GitHub → Settings → Secrets and variables → Actions:
 
 | Name | Type | Value |
 |---|---|---|
-| `FTP_SERVER` | Secret | FTP server from cPanel → FTP Accounts (e.g. `ftp.yourdomain.com`) |
+| `FTP_SERVER` | Secret | The hosting server's own hostname (e.g. `server123.web-hosting.com`, shown top-right in cPanel or under *Configure FTP Client*). Not `ftp.jamescolife.com`: FTPS checks the certificate, which matches the server's name. |
 | `FTP_USERNAME` | Secret | A cPanel FTP account whose Directory is the James & Co folder only |
 | `FTP_PASSWORD` | Secret | That FTP account's password |
 | `FTP_SERVER_DIR` | Variable (optional) | Upload folder relative to the FTP account. Default `./` (the account's own folder). |
@@ -81,5 +81,6 @@ Added to the end of `style.css` and `app.js`. The original design is unchanged.
 2. Property photos, Airbnb links, Wi-Fi and guest instructions are still empty in `lib/default-content.json`.
 3. Experience prices are "To be confirmed" everywhere. Historical fees are not an approved rate card.
 4. Owner intake and photo upload are marked "pending" on `owners.html`.
-5. Domain: `jamescolife.com` is planned. Confirm it's registered and set as the hosting's domain.
+5. Domain: `jamescolife.com` is registered in the Namecheap account (active to Nov 3, 2027, privacy on).
+   It's being added to the Stellar Plus plan as a second domain with its own folder.
 6. Namecheap account has two-factor authentication **off**. Turn it on: the account controls the domain and hosting.
