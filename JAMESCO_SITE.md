@@ -32,9 +32,14 @@ One-time setup, in GitHub → Settings → Secrets and variables → Actions:
 | Name | Type | Value |
 |---|---|---|
 | `FTP_SERVER` | Secret | FTP server from cPanel → FTP Accounts (e.g. `ftp.yourdomain.com`) |
-| `FTP_USERNAME` | Secret | A cPanel FTP account limited to the site folder |
+| `FTP_USERNAME` | Secret | A cPanel FTP account whose Directory is the James & Co folder only |
 | `FTP_PASSWORD` | Secret | That FTP account's password |
-| `FTP_SERVER_DIR` | Variable (optional) | Upload folder, default `public_html/`. Must end with `/`. |
+| `FTP_SERVER_DIR` | Variable (optional) | Upload folder relative to the FTP account. Default `./` (the account's own folder). |
+
+**Warning:** the Namecheap plan (Stellar Plus) is shared with **btdparts.com**, which lives in
+`public_html`. The James & Co site must be an addon domain or subdomain with its **own folder**, and
+the deploy FTP account must be locked to that folder. Never point it at `public_html`. The plan is
+listed as expiring Dec 16, 2026 (auto-renew on). If it lapses, both sites go offline.
 
 Until those secrets exist, the workflow skips the upload with a warning instead of failing.
 

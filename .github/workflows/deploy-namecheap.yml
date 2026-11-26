@@ -1,9 +1,11 @@
 # Publishes public/ to Namecheap shared hosting on every push to main.
 # Needs repository secrets (GitHub > Settings > Secrets and variables > Actions):
 #   FTP_SERVER     e.g. ftp.jamescolife.com or the server name from cPanel
-#   FTP_USERNAME   the cPanel FTP account
+#   FTP_USERNAME   a cPanel FTP account whose Directory is the James & Co site folder ONLY
 #   FTP_PASSWORD   that account's password
-# Optional repository variable FTP_SERVER_DIR (default: public_html/)
+# The hosting plan's main domain (btdparts.com) lives in public_html. The FTP account must be
+# locked to the James & Co folder so this upload can never reach another site.
+# Files go to the FTP account's own folder (./). Optional variable FTP_SERVER_DIR overrides it.
 # Until the secrets exist, the workflow skips the upload instead of failing.
 
 name: Deploy to Namecheap
@@ -53,7 +55,7 @@ jobs:
           protocol: ftps
           port: 21
           local-dir: ./public/
-          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}
+          server-dir: ${{ vars.FTP_SERVER_DIR || './' }}
           exclude: |
             **/.git*
             **/.git*/**
