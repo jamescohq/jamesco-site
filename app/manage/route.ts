@@ -1,0 +1,3 @@
+import {env} from 'cloudflare:workers';import {manageHtml} from '@/lib/manage-html';
+export const dynamic='force-dynamic';
+export async function GET(request:Request){const email=request.headers.get('oai-authenticated-user-email');if(!email){const url=new URL('/signin-with-chatgpt?return_to=%2Fmanage',request.url);return Response.redirect(url,302)}const allowed=(env as unknown as {ADMIN_EMAIL?:string}).ADMIN_EMAIL;if(!allowed||email.toLowerCase()!==allowed.toLowerCase())return new Response('Access denied',{status:403,headers:{'Cache-Control':'no-store'}});return new Response(manageHtml,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}})}
