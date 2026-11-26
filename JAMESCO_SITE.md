@@ -17,6 +17,13 @@ An untouched copy of the export is kept beside this folder in `original_site_v9/
 
 ## Hosting and updates
 
+**Live at https://jamescolife.com since 2026-11-26.** Addon domain on the Stellar Plus plan
+(server `premium325.web-hosting.com`), folder `/jamescolife.com`, FTP account `deploy@jamescolife.com`
+locked to that folder. Nameservers: Namecheap Web Hosting DNS. SSL: Namecheap-issued, valid to 2027-06-12.
+Launch check: all 39 public files byte-identical to the repo, all six security headers present,
+HTTP → HTTPS 301, `/manage` → `/`, dotfiles/`manage.js`/folder listings 403, btdparts.com unaffected.
+The old ChatGPT Sites copy (`james-co-life…chatgpt.site`) is still online.
+
 | Where | What works | What doesn't |
 |---|---|---|
 | Namecheap shared hosting | Every public page, images, motion, security headers (`public/.htaccess`) | Admin editor, saving content, uploads (backend not deployed) |
